@@ -1,0 +1,28 @@
+We need to make a telemetry software that has the following features 
+
+A.) Capture incoming data from the rocket.
+    a.) the incoming data will be : {
+        float altitude ,
+        double Axis_X(roll),
+        double Axis_Y(pitch),
+        double Axis_Z(yaw),
+        float speed ,
+        float acc ,
+        int_8 checksum
+    }
+    b.) Also make the flight computer.
+        i) the flight computer will send the packets ,
+        ii.) control all the operations of the rocket while in flight.
+
+B.) Display the captured Data in realtime.
+C.) Store the recieved data in a log file side by side.
+D.) Be able to reopen log files that are saved.
+E.) Replay the files content in realtime.
+F.) Show the 3d oreintation of the rocket 
+
+Language : Python 
+Libs : pandas , matplotlib , any GUI lib 
+Figma 
+
+Also we need to make a datalogger for the test stand for the motors that we have .
+
