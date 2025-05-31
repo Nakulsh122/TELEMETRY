@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SpaceX Starship Infographic</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #161b22;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #30363d;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .timeline {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #21262d;
+      border-left: 5px solid #58a6ff;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .section h2 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      cursor: pointer;
+      color: #58a6ff;
+    }
+
+    .section-content {
+      display: none;
+      font-size: 1rem;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .section.active .section-content {
+      display: block;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #161b22;
+      border-top: 2px solid #30363d;
+      color: #8b949e;
+    }
+
+    @media screen and (max-width: 600px) {
+      .section h2 {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SpaceX Starship: The Path to the Stars 🚀</h1>
+  </header>
+
+  <div class="timeline">
+    <div class="section">
+      <h2>🚀 Introduction: Redefining Space Exploration</h2>
+      <div class="section-content">
+        Starship is a fully reusable super heavy-lift rocket aimed at making humanity multi-planetary. It will carry satellites, cargo, and people across Earth, Moon, and Mars — revolutionizing space access through rapid reusability.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🛠️ Genesis and Evolution</h2>
+      <div class="section-content">
+        From Mars Colonial Transporter (2012) to ITS, BFR, and now Starship — the design evolved through practicality, with a focus on scalability, sustainability, and cost efficiency.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🧪 Design Philosophy & Materials</h2>
+      <div class="section-content">
+        SpaceX embraces a fail-fast, learn-fast approach. The shift to stainless steel over carbon fiber enabled quicker, cheaper iteration — key to the project's rapid progress.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🔥 Raptor Engines</h2>
+      <div class="section-content">
+        Methane-fueled Raptor engines power Starship. Cleaner and ISRU-compatible, they offer massive thrust (230+ tons) and reduced maintenance needs, crucial for Mars missions.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📐 Key Specifications</h2>
+      <div class="section-content">
+        Height: ~120m | Diameter: 9m | Payload to LEO: Up to 200 tons reusable | Features: Ceramic heat shield tiles, hot staging, Mechazilla catch system, orbital refueling support.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📈 Test Flights (2019–2025)</h2>
+      <div class="section-content">
+        From Starhopper hops to full-stack IFTs, each test brought vital data. Highlights include SN15's first successful landing, IFT-5’s Mechazilla catch, and IFT-9’s booster reflight.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🏆 Achievements & Lessons</h2>
+      <div class="section-content">
+        Hot staging, rapid iteration, and booster reuse validated. Failures like propellant leaks and heat shield degradation led to structural, engine, and redundancy upgrades.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🌍 Future Outlook</h2>
+      <div class="section-content">
+        Starship will support Artemis lunar landings, Starlink mega-deployments, Mars colonization, and even Earth-to-Earth travel. Infrastructure in Texas and Florida is scaling up to support mass production.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🧪 Challenges Ahead</h2>
+      <div class="section-content">
+        Orbital refueling, life support systems for long Mars missions, and ultra-fast reusability without refurbishment remain key engineering frontiers for SpaceX.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🌌 Conclusion</h2>
+      <div class="section-content">
+        SpaceX Starship isn't just a rocket — it's a paradigm shift in space access, built on rapid iteration, bold vision, and redefining the future of interplanetary travel.
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 SpaceX Starship Infographic by GPT | Data from SpaceX & NASA sources
+  </footer>
+
+  <script>
+    document.querySelectorAll('.section h2').forEach(header => {
+      header.addEventListener('click', () => {
+        const section = header.parentElement;
+        section.classList.toggle('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
