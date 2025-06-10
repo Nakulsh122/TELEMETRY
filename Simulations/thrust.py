@@ -5,12 +5,20 @@ import scipy.integrate as sci
 # Constants
 G = 6.6743e-11         # Gravitational constant (m^3 kg^-1 s^-2)
 M_e = 5.972e24         # Mass of Earth (kg)
-Rplanet = 6378e3       # Radius of Earth (m)
-mass_0 = 1000          # Mass of object (kg) - increased for more realistic rocket
-maxThrust = 15000      # Force in newtons (N) - increased proportionally
-ISP = 300              # Specific impulse (s)
-tMECO = 120             # Main Engine Cut-Off time (s)
-
+Rplanet = 6378e3 
+w_tons = 5.3      # Radius of Earth (m)
+mass_0 = w_tons*2000/2.2       # Mass of object (kg) - increased for more realistic rocket
+maxThrust = 167970.0   # Force in newtons (N) - increased proportionally
+ISP1 = 250    
+ISP2 = 400          # Specific impulse (s)
+tMECO = 38   
+tsep1 = 2.0
+mass1tons  = 0.2   
+mass1 = mass1tons*2000/2.2
+t2start = 261.0    # Main Engine Cut-Off time (s)
+tSECO = t2start + 10
+ve1 = ISP1 * 9.81
+ve2 = ISP2*9.81
 # Gravity function - returns force per unit mass (acceleration)
 def gravity(x, y):
     r = np.sqrt(x**2 + y**2)
@@ -23,15 +31,30 @@ def gravity(x, y):
 # Thrust function
 def propulsion(t):
     if t < tMECO:
+        theta = 10 * np.pi / 180
         thrust_f = maxThrust
-    else:
+        mdot = -thrust_f / ve1
+    elif t < (tMECO + tsep1):
+        theta = 0.0
         thrust_f = 0.0
-    theta = 30 * np.pi / 180  # 10 degrees in radians
+        mdot = -mass1 / tsep1
+    elif t < t2start:
+        theta = 0.0
+        thrust_f = 0.0
+        mdot = 0.0
+    elif t <= tSECO:
+        theta = 90.0 * np.pi / 180
+        thrust_f = maxThrust
+        mdot = -thrust_f / ve2
+    else:
+        theta = 0.0
+        thrust_f = 0.0
+        mdot = 0.0
+
     thrust_X = thrust_f * np.cos(theta)
     thrust_Y = thrust_f * np.sin(theta)
-    ve = ISP * 9.81  # Effective exhaust velocity (m/s)
-    mdot = -thrust_f / ve if thrust_f > 0 else 0.0  # Mass flow rate
     return np.asarray([thrust_X, thrust_Y]), mdot
+
 
 # Derivatives
 def derivatives(state, t):
@@ -66,7 +89,7 @@ vely_0 = 0.0
 stateinitial = [x0, y0, velx_0, vely_0, mass_0]
 
 # Time Settings
-tout = np.linspace(0, 1000, 1000)
+tout = np.linspace(0, 2000, 1000)
 
 # Integrate ODE
 stateout = sci.odeint(derivatives, stateinitial, tout)
@@ -125,15 +148,6 @@ accel_total_mag = np.sqrt(accel_total_x**2 + accel_total_y**2)
 accel_force_based_x = accel_gravity_x + accel_thrust_x
 accel_force_based_y = accel_gravity_y + accel_thrust_y
 accel_force_based_mag = np.sqrt(accel_force_based_x**2 + accel_force_based_y**2)
-
-print(f"\nAcceleration Verification:")
-print(f"Max difference in X acceleration: {np.max(np.abs(accel_total_x - accel_force_based_x)):.6f} m/s²")
-print(f"Max difference in Y acceleration: {np.max(np.abs(accel_total_y - accel_force_based_y)):.6f} m/s²")
-print(f"Max difference in total acceleration: {np.max(np.abs(accel_total_mag - accel_force_based_mag)):.6f} m/s²")
-# Theoretical surface gravity for comparison
-g_surface = G * M_e / Rplanet**2
-print(f"Surface gravity: {g_surface:.2f} m/s²")
-print(f"Initial gravitational acceleration: {accel_gravity_mag[0]:.2f} m/s²")
 
 # Plotting
 fig, axs = plt.subplots(3, 2, figsize=(12, 10))
