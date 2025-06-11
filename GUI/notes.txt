@@ -1,0 +1,47 @@
+this will be a module to see the capabilities an testing making a gui using a arduino board 
+any MCU ( Micro controller unit ) can be used .
+the steps in the series will be :
+    connecting with the board.
+    Communicate with the board.
+    Display the outputs.
+    Record the output.
+    Transform the data , apply filters 
+    Manage and add security to the data and the software.
+
+Libraries used : 
+    Tkinter 
+    Matplot Lib
+    numpy
+    scipy
+
+Concepts : 
+    OOPS
+    Data Conversion
+    Threading 
+
+Layers of the program :
+    User Interface.
+    Tkinter 
+        frames
+            connection
+            widgets 
+            display
+    Matplot Lib
+    Data Transformation 
+        numpy
+        scipy
+        data filtering 
+        Value Conversion
+    Threading
+    PySerial
+        connection
+        data recieve , Transmit 
+        Serial Setup
+    Communication Protocols
+        Synchronise
+        Start Stream
+        Stop Stream
+    Embedded Code
+        Management 
+        Message contruction
+        
