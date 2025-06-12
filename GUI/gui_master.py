@@ -13,7 +13,7 @@ class RootGUI:
     def __init__(self):
         self.root = Tk()  # initialising the root element.
         self.root.title("Serial Communication GUI")
-        self.root.geometry("800x200")
+        self.root.geometry("800x120")
         self.root.resizable(True, True)
         self.root.config(bg="black")
 
@@ -132,7 +132,8 @@ class ComGUI:
                 self.drop_com["state"] = "disabled"
                 self.drop_Bode["state"] = "disabled"
                 InfoMsg = f"Connected to {self.clicked_com.get() } at {self.clicked_Bode.get()}"
-                messagebox.showinfo("Connection Status",InfoMsg)
+                messagebox.showinfo("Connection Status", InfoMsg)
+                self.conn_menu = ConnGUI(self.root,self.serial)
             else:
                 ErrorMsg = f"Error connecting to {self.clicked_com.get()} at {self.clicked_Bode.get()}"
 
@@ -147,6 +148,145 @@ class ComGUI:
             pass
 
 
+class ConnGUI:
+    def __init__(self, root, serial):
+        self.padx= 10
+        self.pady= 10
+        self.root = root
+        self.serial = serial
+        self.frame = LabelFrame(
+            self.root,
+            text = "Connection Manager",
+            bg="black",
+            fg="white",
+            padx= self.padx,
+            pady = self.pady
+        )
+
+        self.sync_Label = Label(
+            self.frame,
+            text="sync status",
+            bg="black",
+            fg="white",
+            width=15,
+            anchor="w",
+            padx = self.padx,
+            pady = self.pady
+        )
+
+        self.sync_status = Label(
+            self.frame,
+            text="...Sync...",
+            bg="black",
+            fg="orange",
+            width=15,
+            anchor="w"
+        )
+
+        self.ch_label = Label(
+            self.frame,
+            text="Active Channels:",
+            bg="black",
+            fg="white",
+            width=15,
+            anchor="w"
+        )
+
+        self.ch_status = Label(
+            self.frame,
+            text="...",
+            bg="black",
+            fg="white",
+            width=15,
+            anchor="w"
+        )
+
+        self.btn_start_stream = Button(
+            self.frame,
+            text="Start",
+            state="disabled",
+            bg="black",
+            fg="white",
+            width=5,
+            command=self.start_stream
+        )
+
+        self.btn_stop_stream =Button(
+            self.frame,
+            text="Stop",
+            state="disabled",
+            bg="black",
+            fg="white",
+            width=5,
+            command=self.stop_stream
+        )
+
+        self.btn_add_chart = Button(
+            self.frame,
+            text="Add Chart",
+            bg="black",
+            fg="white",
+            command = self.add_chart
+        )
+
+        self.btn_kill_chart = Button(
+            self.frame,
+            text="Kill Chart",
+            bg="black",
+            fg="white",
+            command = self.kill_chart
+        ) 
+        self.ConnGUIOpen()
+
+    def ConnGUIOpen(self):
+        self.root.geometry("800x120")
+        self.frame.grid(
+            row=0,
+            column=4,
+            rowspan=3,
+            columnspan=3,
+            padx = 5,
+            pady = 5,
+        )
+        self.frame.config(
+            width=60
+        )
+        self.sync_Label.grid(column=1,row=1)
+        self.sync_status.grid(column =2 ,row = 1)
+        self.ch_label.grid(column=1,row=2)
+        self.ch_status.grid(column=2,row=2)
+        self.btn_start_stream.grid(column=3,row=1)
+        self.btn_stop_stream.grid(column=3,row=2)
+        self.btn_add_chart.grid(column=4 ,row=1)
+        self.btn_kill_chart.grid(column=4,row=2)
+        self.save = False
+        self.SaveVar = IntVar()
+        self.save_check = Checkbutton(
+            self.frame,
+            text = "Save Data",
+            variable = self.SaveVar,
+            onvalue=1,
+            offvalue=0,
+            state="disabled",
+            command = self.save_data
+        )
+    
+    def start_stream(self):
+        pass
+
+    def stop_stream(self):
+        pass
+    
+    def add_chart(self):
+        pass
+
+    def kill_chart(self):
+        pass
+    
+    def save_data(self):
+        pass
+
 if __name__ == "__main__":
     RootGUI()
     ComGUI()
+    ConnGUI()

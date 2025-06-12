@@ -44,4 +44,28 @@ Layers of the program :
     Embedded Code
         Management 
         Message contruction
-        
+
+
+During connection with the arduino it will send some messages and we will encode the stream.    
+
+Communication Protocol 
+
+UART Message = "#(seperator) !(code) #(seperator)" + "\n(termination character)"
+
+PC -> UART message("#?#\n) -> MCU // query the no of channels present;
+
+MCU stops execution of other tasks and then returns the no of channels that are present 
+
+MCU -> UART message("#!#n#\n") -> PC
+
+PC -> #A#\n -> MCU
+
+MCU will start sending the data with the messages with n segments 
+some of the chars k;
+
+MCU -> #D#d1#d2#...#dn#K#\n -> PC
+
+K - sum of the chars that are present in the message 
+
+PC -> #S#\n -> MCU stop streaming 
+
