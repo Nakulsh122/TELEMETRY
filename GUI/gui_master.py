@@ -7,50 +7,49 @@
 
 from tkinter import *
 from tkinter import messagebox
-
-
+black = "#000000"
+white = "#FFFFFF"
 class RootGUI:
     def __init__(self):
         self.root = Tk()  # initialising the root element.
         self.root.title("Serial Communication GUI")
         self.root.geometry("800x120")
         self.root.resizable(True, True)
-        self.root.config(bg="black")
-
+        self.root.config(bg=black)
 
 class ComGUI:
     def __init__(self, root, serial):  # initialise the comGUI frame
         self.root = root
         self.serial = serial  # include the serial controller in the gui
         self.frame = LabelFrame(
-            self.root, text="Com Manager", bg="black", fg="white", padx=10, pady=10
+            self.root, text="Com Manager", bg=black, fg=white, padx=10, pady=10
         )
         self.label_com = Label(
             self.frame,
             text="Available Port(s):",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             width=15,
             anchor="w",
         )
         self.label_bodR = Label(
-            self.frame, text="Bode Rate", bg="black", fg="white", width=15, anchor="w"
+            self.frame, text="Bode Rate", bg=black, fg=white, width=15, anchor="w"
         )
         self.ComOptMenu()
         self.BodeRateMenu()
         self.btn_refresh = Button(
             self.frame,
             text="Refresh",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             width=10,
             command=self.refresh_menu,
         )
         self.btn_connect = Button(
             self.frame,
             text="Connect",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             width=10,
             state="disabled",
             command=self.serialConnect,
@@ -69,7 +68,7 @@ class ComGUI:
             *self.serial.comList,
             command=self.Connect_ctrl,
         )
-        self.drop_com.config(width=10, bg="white", fg="black")
+        self.drop_com.config(width=10, bg=white, fg = black)
 
     def BodeRateMenu(self):
         # dropdow for the Bode options
@@ -95,7 +94,7 @@ class ComGUI:
         self.drop_Bode = OptionMenu(
             self.frame, self.clicked_Bode, *self.Bode_rates, command=self.Connect_ctrl
         )
-        self.drop_Bode.config(width=10, bg="white", fg="black")
+        self.drop_Bode.config(width=10, bg=white, fg = black)
 
     def Publish(self):
         # will publish the component on the root
@@ -139,6 +138,7 @@ class ComGUI:
 
             pass
         else:
+            self.conn_menu.ConnGUIClose()
             self.serial.serialClose()
             self.btn_connect["text"] = "Connect"
             self.btn_refresh["state"] = "active"
@@ -157,8 +157,8 @@ class ConnGUI:
         self.frame = LabelFrame(
             self.root,
             text = "Connection Manager",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             padx= self.padx,
             pady = self.pady
         )
@@ -166,8 +166,8 @@ class ConnGUI:
         self.sync_Label = Label(
             self.frame,
             text="sync status",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             width=15,
             anchor="w",
             padx = self.padx,
@@ -177,7 +177,7 @@ class ConnGUI:
         self.sync_status = Label(
             self.frame,
             text="...Sync...",
-            bg="black",
+            bg=black,
             fg="orange",
             width=15,
             anchor="w"
@@ -186,8 +186,8 @@ class ConnGUI:
         self.ch_label = Label(
             self.frame,
             text="Active Channels:",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             width=15,
             anchor="w"
         )
@@ -195,8 +195,8 @@ class ConnGUI:
         self.ch_status = Label(
             self.frame,
             text="...",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             width=15,
             anchor="w"
         )
@@ -205,8 +205,8 @@ class ConnGUI:
             self.frame,
             text="Start",
             state="disabled",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             width=5,
             command=self.start_stream
         )
@@ -215,8 +215,8 @@ class ConnGUI:
             self.frame,
             text="Stop",
             state="disabled",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             width=5,
             command=self.stop_stream
         )
@@ -224,18 +224,33 @@ class ConnGUI:
         self.btn_add_chart = Button(
             self.frame,
             text="Add Chart",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             command = self.add_chart
         )
 
         self.btn_kill_chart = Button(
             self.frame,
             text="Kill Chart",
-            bg="black",
-            fg="white",
+            bg=black,
+            fg=white,
             command = self.kill_chart
         ) 
+
+        self.save = False
+        self.SaveVar = IntVar()
+        self.save_check = Checkbutton(
+            self.frame,
+            text = "Save Data",
+            variable = self.SaveVar,
+            onvalue=1,
+            offvalue=0,
+            state="disabled",
+            bg=black,
+            fg=white,
+            command = self.save_data
+        )
+
         self.ConnGUIOpen()
 
     def ConnGUIOpen(self):
@@ -259,18 +274,14 @@ class ConnGUI:
         self.btn_stop_stream.grid(column=3,row=2)
         self.btn_add_chart.grid(column=4 ,row=1)
         self.btn_kill_chart.grid(column=4,row=2)
-        self.save = False
-        self.SaveVar = IntVar()
-        self.save_check = Checkbutton(
-            self.frame,
-            text = "Save Data",
-            variable = self.SaveVar,
-            onvalue=1,
-            offvalue=0,
-            state="disabled",
-            command = self.save_data
-        )
-    
+        self.save_check.grid(column = 5 , row = 1 )
+        
+    def ConnGUIClose(self):
+        for widget in self.frame.winfo_children(): #list of all children inside the frame 
+            widget.destroy()
+        self.frame.destroy()
+        self.root.geometry("800x120")
+
     def start_stream(self):
         pass
 
