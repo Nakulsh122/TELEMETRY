@@ -7,20 +7,33 @@
 
 from tkinter import *
 from tkinter import messagebox
+from tkinter import ttk
+import threading    
 black = "#000000"
 white = "#FFFFFF"
 class RootGUI:
-    def __init__(self):
+    def __init__(self,serial,data):
         self.root = Tk()  # initialising the root element.
         self.root.title("Serial Communication GUI")
-        self.root.geometry("800x120")
+        self.root.geometry("400x120")
         self.root.resizable(True, True)
         self.root.config(bg=black)
+        self.serial = serial 
+        self.data = data 
+        self.root.protocol("WM_DELETE_WINDOW", self.closeWindow)
+    
+    def closeWindow(self):
+        print("Closing the Window")
+        self.root.destroy()
+        self.serial.serialClose()
+        self.serial.threading = False
 
 class ComGUI:
-    def __init__(self, root, serial):  # initialise the comGUI frame
+    def __init__(self, root, serial,data):  # initialise the comGUI frame
         self.root = root
         self.serial = serial  # include the serial controller in the gui
+        self.data = data
+        self.conn_menu = None  # Initialize connection menu reference
         self.frame = LabelFrame(
             self.root, text="Com Manager", bg=black, fg=white, padx=10, pady=10
         )
@@ -132,13 +145,25 @@ class ComGUI:
                 self.drop_Bode["state"] = "disabled"
                 InfoMsg = f"Connected to {self.clicked_com.get() } at {self.clicked_Bode.get()}"
                 messagebox.showinfo("Connection Status", InfoMsg)
-                self.conn_menu = ConnGUI(self.root,self.serial)
+                
+                # Display the connection menu
+                self.conn_menu = ConnGUI(self.root, self.serial, self.data)
+                
+                # Start the sync thread - FIXED: Pass conn_menu instead of self
+                self.serial.t1 = threading.Thread(
+                    target=self.serial.serialSync,
+                    args=(self.conn_menu,),  # Pass ConnGUI instance
+                    daemon=True,
+                )
+                self.serial.t1.start()
             else:
                 ErrorMsg = f"Error connecting to {self.clicked_com.get()} at {self.clicked_Bode.get()}"
-
-            pass
+                messagebox.showerror("Connection Error", ErrorMsg)
         else:
-            self.conn_menu.ConnGUIClose()
+            self.serial.threading = False
+            if self.conn_menu:
+                self.conn_menu.ConnGUIClose()
+                self.conn_menu.data.clearData()
             self.serial.serialClose()
             self.btn_connect["text"] = "Connect"
             self.btn_refresh["state"] = "active"
@@ -149,18 +174,19 @@ class ComGUI:
 
 
 class ConnGUI:
-    def __init__(self, root, serial):
-        self.padx= 10
-        self.pady= 10
+    def __init__(self, root, serial, data):
+        self.padx = 10
+        self.pady = 10
         self.root = root
         self.serial = serial
+        self.data = data
         self.frame = LabelFrame(
             self.root,
-            text = "Connection Manager",
+            text="Connection Manager",
             bg=black,
             fg=white,
-            padx= self.padx,
-            pady = self.pady
+            padx=self.padx,
+            pady=self.pady
         )
 
         self.sync_Label = Label(
@@ -170,8 +196,8 @@ class ConnGUI:
             fg=white,
             width=15,
             anchor="w",
-            padx = self.padx,
-            pady = self.pady
+            padx=self.padx,
+            pady=self.pady
         )
 
         self.sync_status = Label(
@@ -211,7 +237,7 @@ class ConnGUI:
             command=self.start_stream
         )
 
-        self.btn_stop_stream =Button(
+        self.btn_stop_stream = Button(
             self.frame,
             text="Stop",
             state="disabled",
@@ -226,7 +252,7 @@ class ConnGUI:
             text="Add Chart",
             bg=black,
             fg=white,
-            command = self.add_chart
+            command=self.add_chart
         )
 
         self.btn_kill_chart = Button(
@@ -234,22 +260,24 @@ class ConnGUI:
             text="Kill Chart",
             bg=black,
             fg=white,
-            command = self.kill_chart
+            command=self.kill_chart
         ) 
 
         self.save = False
         self.SaveVar = IntVar()
         self.save_check = Checkbutton(
             self.frame,
-            text = "Save Data",
-            variable = self.SaveVar,
+            text="Save Data",
+            variable=self.SaveVar,
             onvalue=1,
             offvalue=0,
-            state="disabled",
-            bg=black,
-            fg=white,
-            command = self.save_data
+            bg="black",
+            fg="green",  # high contrast check
+            activeforeground="green",
+            selectcolor="gray20",  # background of the checkbox box
+            command=self.save_data
         )
+        
 
         self.ConnGUIOpen()
 
@@ -260,41 +288,46 @@ class ConnGUI:
             column=4,
             rowspan=3,
             columnspan=3,
-            padx = 5,
-            pady = 5,
+            padx=5,
+            pady=5,
         )
         self.frame.config(
             width=60
         )
-        self.sync_Label.grid(column=1,row=1)
-        self.sync_status.grid(column =2 ,row = 1)
-        self.ch_label.grid(column=1,row=2)
-        self.ch_status.grid(column=2,row=2)
-        self.btn_start_stream.grid(column=3,row=1)
-        self.btn_stop_stream.grid(column=3,row=2)
-        self.btn_add_chart.grid(column=4 ,row=1)
-        self.btn_kill_chart.grid(column=4,row=2)
-        self.save_check.grid(column = 5 , row = 1 )
+        self.sync_Label.grid(column=1, row=1)
+        self.sync_status.grid(column=2, row=1)
+        self.ch_label.grid(column=1, row=2)
+        self.ch_status.grid(column=2, row=2)
+        self.btn_start_stream.grid(column=3, row=1)
+        self.btn_stop_stream.grid(column=3, row=2)
+        self.btn_add_chart.grid(column=4, row=1)
+        self.btn_kill_chart.grid(column=4, row=2)
+        self.save_check.grid(column=5, row=1)
         
     def ConnGUIClose(self):
-        for widget in self.frame.winfo_children(): #list of all children inside the frame 
+        for widget in self.frame.winfo_children():  # list of all children inside the frame 
             widget.destroy()
         self.frame.destroy()
         self.root.geometry("800x120")
 
     def start_stream(self):
+        print("starting Stream")
         pass
 
     def stop_stream(self):
+        print("Stopping Stream")
         pass
     
     def add_chart(self):
+        print("Add chart")
         pass
 
     def kill_chart(self):
+        print("fill chart")
         pass
     
     def save_data(self):
+        print(self.SaveVar.get())
         pass
 
 if __name__ == "__main__":

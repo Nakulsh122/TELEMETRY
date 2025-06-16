@@ -73,4 +73,6 @@ Thread Operations :
 
 Main thread manages the GUI and the program logic 
 
-New thread : will be parallel to the main and then it will obtain the data from the 
+New thread : will be parallel to the main and then it will obtain the data from the serial 
+
+Chart frame Logics : 

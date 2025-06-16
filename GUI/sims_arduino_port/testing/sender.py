@@ -49,14 +49,15 @@ while True:
 
         print(f"[Received] {cmd}")
 
-        if cmd == "#n#":
-            ser.write(f"#N#{NUM_CHANNELS}\n".encode())
+        if cmd == "#?#":
+            ser.write(f"#!#{NUM_CHANNELS}#\n".encode())  # sync_ok
+            print("[Info] Sent sync_ok (#!#)")
 
         elif cmd == "#s#":
             sending_data = True
             print("[Info] Data stream started.")
 
-        elif cmd == "#st#":
+        elif cmd == "#A#":
             sending_data = False
             print("[Info] Data stream stopped.")
 
