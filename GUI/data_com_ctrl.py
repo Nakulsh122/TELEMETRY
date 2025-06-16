@@ -7,6 +7,11 @@ class DataMaster():
         self.syncChannels = 0
         self.xData = []
         self.yData = []
+        self.functions = [
+            "Add",
+            "Sub",
+            "Color"
+        ]
     
     def DecodeMsg(self):
         temp = self.RowMsg.decode('utf8')
